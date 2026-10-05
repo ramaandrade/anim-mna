@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070b14"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="shieldGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="goldGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <!-- Fundo do ícone com cantos suaves -->
+  <rect width="512" height="512" rx="110" fill="url(#bgGrad512)" stroke="#38bdf8" stroke-width="6"/>
+  <!-- Brasão de M&A -->
+  <path d="M256 75 L380 120 C380 260 320 360 256 415 C192 360 132 260 132 120 Z" fill="url(#shieldGrad512)" stroke="#0284c7" stroke-width="5"/>
+  <!-- Balança do CADE -->
+  <line x1="256" y1="135" x2="256" y2="300" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+  <line x1="180" y1="175" x2="332" y2="175" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+  <!-- Pratos -->
+  <polygon points="180,175 160,240 200,240" fill="none" stroke="#f8fafc" stroke-width="4"/>
+  <ellipse cx="180" cy="242" rx="36" ry="10" fill="url(#goldGrad512)"/>
+  <polygon points="332,175 312,240 352,240" fill="none" stroke="#f8fafc" stroke-width="4"/>
+  <ellipse cx="332" cy="242" rx="36" ry="10" fill="url(#goldGrad512)"/>
+  <!-- Base -->
+  <ellipse cx="256" cy="305" rx="42" ry="16" fill="#0f172a" stroke="#ffffff" stroke-width="5"/>
+  <!-- Letreiro AnimM&A -->
+  <text x="256" y="375" font-family="-apple-system, sans-serif" font-size="36" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">AnimM&amp;A</text>
+  <text x="256" y="465" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="1">CONTROLE CORPORATIVO</text>
+</svg>

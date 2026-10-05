@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AnimM&A: O Jogo do Controle Corporativo | Web App Mobile PWA</title>
+  <meta name="description" content="Web App Gamificado de M&A, Governança e Antitruste (PWA Mobile-First). Assuma o papel de CEO, calcule o HHI, defenda a empresa contra o Tubarão Gordon e aprenda táticas societárias!">
+  <meta name="theme-color" content="#070b14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AnimM&A">
+
+  <!-- Manifest e Ícones PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/icon-192.svg">
+  <link rel="apple-touch-icon" href="./assets/icons/icon-192.svg">
+
+  <!-- Estilos Mobile-First -->
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/animations.css">
+</head>
+<body>
+
+  <!-- Container Principal do Smartphone PWA -->
+  <main id="app-container">
+    
+    <!-- Banner de Instalação PWA (Opcional) -->
+    <div id="pwa-install-banner" class="pwa-banner hidden">
+      <span class="pwa-banner-text">📲 Instale o <strong>AnimM&A</strong> no seu celular para jogar offline!</span>
+      <button id="pwa-install-btn" class="btn-pwa">Instalar App</button>
+    </div>
+
+    <!-- Header Mobile Superior Fixo -->
+    <header class="app-header">
+      <div class="brand" id="brand-home-btn" title="AnimM&A: O Jogo do Controle Corporativo">
+        <span class="brand-icon">🏛️</span>
+        <div class="brand-text">
+          <h1>AnimM&A</h1>
+          <span>Controle Corporativo & CADE</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="glossary-btn" class="icon-btn" title="Glossário C-Level" aria-label="Glossário">📚</button>
+        <button id="mute-btn" class="icon-btn" title="Alternar Som" aria-label="Alternar Som">🔊</button>
+      </div>
+    </header>
+
+    <!-- Faixa Superior de Métricas Rápidas em Tempo Real -->
+    <section class="mobile-top-strip" id="mobile-top-strip">
+      <!-- Injetado dinamicamente via ui.js -->
+    </section>
+
+    <!-- Barra de Progresso Mobile da Jornada (Stepper) -->
+    <nav class="stepper-nav" id="journey-stepper" aria-label="Progresso da Jornada">
+      <!-- Injetado dinamicamente via ui.js -->
+    </nav>
+
+    <!-- Área Principal de Conteúdo -->
+    <div id="main-flow-content">
+      <!-- Injetado dinamicamente via ui.js -->
+    </div>
+
+    <!-- Container Dinâmico para Modais e Bottom Sheets -->
+    <div id="modal-container"></div>
+
+    <!-- Barra de Navegação Inferior Fixa (Estilo Celular / Thumb Navigation) -->
+    <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação do Aplicativo">
+      <button class="nav-tab-btn active" data-tab="journey" id="tab-journey">
+        <span class="tab-icon">🧭</span>
+        <span class="tab-text">Jornada</span>
+      </button>
+      <button class="nav-tab-btn" data-tab="mna" id="tab-mna">
+        <span class="tab-icon">🧩</span>
+        <span class="tab-text">M&A Lab</span>
+      </button>
+      <button class="nav-tab-btn" data-tab="cade" id="tab-cade">
+        <span class="tab-icon">⚖️</span>
+        <span class="tab-text">CADE</span>
+      </button>
+      <button class="nav-tab-btn" data-tab="defense" id="tab-defense">
+        <span class="tab-icon">🛡️</span>
+        <span class="tab-text">Defesas</span>
+      </button>
+      <button class="nav-tab-btn" data-tab="crisis" id="tab-crisis">
+        <span class="tab-icon">🚨</span>
+        <span class="tab-text">Crise</span>
+      </button>
+      <button class="nav-tab-btn" data-tab="history" id="tab-history">
+        <span class="tab-icon">📜</span>
+        <span class="tab-text">Casos</span>
+      </button>
+      <button class="nav-tab-btn" data-tab="report" id="tab-report">
+        <span class="tab-icon">📋</span>
+        <span class="tab-text">Laudo</span>
+      </button>
+    </nav>
+
+  </main>
+
+  <!-- Ponto de Entrada da Aplicação -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

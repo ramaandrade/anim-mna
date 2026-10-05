@@ -1,0 +1,28 @@
+{
+  "name": "animmna-jogo-do-controle-corporativo",
+  "version": "1.0.0",
+  "description": "Aplicativo Web Gamificado de M&A, Governança Corporativa e Leis Antitruste (CADE) - PWA Mobile-First",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "serve": "python serve.py",
+    "test": "node tests/hhiEngine.test.js && node tests/mnaAndTakeover.test.js"
+  },
+  "keywords": [
+    "mna",
+    "mergers-and-acquisitions",
+    "cade",
+    "hhi",
+    "herfindahl-hirschman",
+    "governance",
+    "poison-pill",
+    "golden-parachute",
+    "hostile-takeover",
+    "gamification",
+    "pwa",
+    "mobile-first"
+  ],
+  "author": "Google DeepMind / Antigravity",
+  "license": "MIT"
+}

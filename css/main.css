@@ -1,0 +1,355 @@
+/**
+ * main.css
+ * Estilos Principais - Arquitetura Mobile-First PWA para Celular
+ * AnimM&A: O Jogo do Controle Corporativo
+ */
+
+:root {
+  --bg-primary: #070b14;
+  --bg-secondary: #0f172a;
+  --bg-card: rgba(17, 24, 39, 0.85);
+  --bg-card-hover: rgba(30, 41, 59, 0.9);
+  --bg-glass: rgba(15, 23, 42, 0.88);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.16);
+
+  /* Identidade Visual & Personagens */
+  --color-gordon: #ef4444;       /* Carmim / Tubarão Agressor */
+  --color-defesa: #a855f7;       /* Púrpura / Dra. Defesa */
+  --color-cade: #0284c7;         /* Azul CADE / Regulador */
+  --color-player: #38bdf8;       /* Ciano Claro / NexTech */
+  --color-success: #10b981;      /* Verde Lucro / Aprovação */
+  --color-warning: #f59e0b;      /* Âmbar Alerta / Moderado */
+  --color-gold: #fbbf24;         /* Dourado M&A */
+
+  /* Textos */
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-sub: #64748b;
+
+  /* Formas & Raios */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow-red: 0 0 20px rgba(239, 68, 68, 0.3);
+  --shadow-glow-blue: 0 0 20px rgba(2, 132, 199, 0.3);
+  --shadow-glow-purple: 0 0 20px rgba(168, 85, 247, 0.3);
+
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  background-color: #030712;
+  color: var(--text-main);
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 1.45;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-x: hidden;
+  padding: 0;
+}
+
+/* Moldura de Smartphone quando visualizado em monitores maiores */
+@media (min-width: 540px) {
+  body {
+    padding: 16px 0;
+    background: radial-gradient(circle at 50% 20%, #111827 0%, #030712 100%);
+  }
+
+  #app-container {
+    width: 440px !important;
+    max-width: 440px !important;
+    min-height: 840px !important;
+    border-radius: 36px !important;
+    border: 7px solid #1f2937 !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+    overflow: hidden;
+  }
+}
+
+#app-container {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* PWA Install Banner */
+.pwa-banner {
+  background: linear-gradient(90deg, #1e293b, #0f172a);
+  border-bottom: 1px solid var(--border-light);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+.pwa-banner.hidden {
+  display: none !important;
+}
+.btn-pwa {
+  background: var(--color-cade);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Header Superior Mobile */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.brand-icon {
+  font-size: 22px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.brand-text h1 {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  background: linear-gradient(90deg, #38bdf8, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-text span {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+  display: block;
+  letter-spacing: 0.2px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
+/* Faixa Superior de Métricas Rápidas */
+.mobile-top-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.7);
+  border-bottom: 1px solid var(--border-color);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.mobile-top-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.m-strip-pill {
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+}
+.strip-lbl {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.strip-val {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.m-strip-pill.blue .strip-val { color: #38bdf8; }
+.m-strip-pill.green .strip-val { color: #10b981; }
+.m-strip-pill.cyan .strip-val { color: #06b6d4; }
+.m-strip-pill.purple .strip-val { color: #c084fc; }
+.m-strip-pill.pill-green .strip-val { color: #10b981; }
+.m-strip-pill.pill-yellow .strip-val { color: #f59e0b; }
+.m-strip-pill.pill-red .strip-val { color: #ef4444; }
+
+/* Barra de Progresso Mobile da Jornada (Stepper) */
+.stepper-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(11, 17, 30, 0.85);
+  border-bottom: 1px solid var(--border-color);
+  overflow-x: auto;
+  gap: 6px;
+  scrollbar-width: none;
+}
+.stepper-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.step-dot-btn {
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.15s ease;
+}
+.step-num {
+  width: 17px;
+  height: 17px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+.step-label {
+  font-weight: 600;
+}
+
+.step-dot-btn.active {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+.step-dot-btn.active .step-num {
+  background: #38bdf8;
+  color: #030712;
+}
+
+.step-dot-btn.completed {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+.step-dot-btn.completed .step-num {
+  background: #10b981;
+  color: #030712;
+}
+
+/* Área Principal de Conteúdo */
+#main-flow-content {
+  flex: 1 1 auto;
+  padding: 14px 12px 85px 12px;
+  overflow-y: auto;
+}
+
+/* Barra de Navegação Inferior Fixa (Estilo Celular) */
+.bottom-nav {
+  position: sticky;
+  bottom: 0;
+  z-index: 40;
+  background: var(--bg-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)) 4px;
+}
+
+.nav-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  min-width: 48px;
+}
+
+.tab-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.tab-text {
+  font-size: 9.5px;
+  letter-spacing: -0.1px;
+}
+
+.nav-tab-btn.active {
+  color: #38bdf8;
+}
+.nav-tab-btn.active .tab-icon {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 2px 5px rgba(56, 189, 248, 0.5));
+}

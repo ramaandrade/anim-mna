@@ -1,0 +1,27 @@
+{
+  "name": "AnimM&A: O Jogo do Controle Corporativo",
+  "short_name": "AnimM&A",
+  "description": "Web App Mobile Gamificado de Fusões & Aquisições, Governança Corporativa e Leis Antitruste (CADE)",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#070b14",
+  "theme_color": "#070b14",
+  "categories": ["education", "finance", "games"],
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "./assets/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

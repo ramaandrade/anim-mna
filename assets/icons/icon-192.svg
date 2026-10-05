@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b132b"/>
+      <stop offset="100%" stop-color="#1c2541"/>
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <!-- Fundo Arredondado do App Icon -->
+  <rect width="192" height="192" rx="42" fill="url(#bgGrad)" stroke="#38bdf8" stroke-width="3"/>
+  <!-- Escudo de Controle Societário -->
+  <path d="M96 28 L142 46 C142 98 120 134 96 156 C72 134 50 98 50 46 Z" fill="url(#shieldGrad)" stroke="#0284c7" stroke-width="2"/>
+  <!-- Balança da Concorrência / CADE dentro do escudo -->
+  <!-- Coluna central -->
+  <line x1="96" y1="52" x2="96" y2="114" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  <line x1="68" y1="68" x2="124" y2="68" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <!-- Pratos da balança -->
+  <polygon points="68,68 60,94 76,94" fill="none" stroke="#f8fafc" stroke-width="2"/>
+  <ellipse cx="68" cy="94" rx="14" ry="4" fill="url(#goldGrad)"/>
+  <polygon points="124,68 116,94 132,94" fill="none" stroke="#f8fafc" stroke-width="2"/>
+  <ellipse cx="124" cy="94" rx="14" ry="4" fill="url(#goldGrad)"/>
+  <!-- Base da balança -->
+  <ellipse cx="96" cy="116" rx="16" ry="6" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+  <!-- Tag M&A -->
+  <text x="96" y="142" font-family="-apple-system, sans-serif" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1">M&amp;A</text>
+</svg>
