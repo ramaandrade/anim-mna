@@ -1,7 +1,9 @@
 # 🏛️ AnimM&A: O Jogo do Controle Corporativo
 
-> **Web App PWA Mobile-First de M&A, Governança Corporativa e Leis Antitruste**  
-> *Assuma o papel de CEO na B3, comande fusões estratégicas, calcule o HHI em tempo real, sobreviva a ataques hostis do Tubarão Gordon e aprenda táticas societárias e de recuperação judicial!*
+> 🌐 **Acesso Online (GitHub Pages):** [https://ramaandrade.github.io/anim-mna/](https://ramaandrade.github.io/anim-mna/)  
+> 📦 **Repositório GitHub:** [https://github.com/ramaandrade/anim-mna](https://github.com/ramaandrade/anim-mna)  
+> 📱 **Web App PWA Mobile-First de M&A, Governança Corporativa e Leis Antitruste**  
+> 🏆 *Assuma o papel de CEO na B3, comande fusões estratégicas, calcule o HHI em tempo real, sobreviva a ataques hostis do Tubarão Gordon e aprenda táticas societárias e de recuperação judicial!*
 
 ---
 
