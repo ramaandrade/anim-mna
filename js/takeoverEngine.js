@@ -6,11 +6,54 @@
 
 export const DEFENSE_CARDS = [
   {
+    id: 'people_pill',
+    name: 'People Pill (Pílula das Pessoas)',
+    subtitle: 'Pacto de Renúncia Coletiva',
+    icon: '👥',
+    costCash: 0,
+    cashInflow: 0,
+    governanceDelta: -5,
+    effectiveness: 70,
+    shortDesc: 'Pacto formal em que 100% dos líderes de tecnologia pedirão demissão se Gordon vencer. Custo R$ 0.',
+    description: 'A empresa é o seu capital humano. Se Gordon assumir o controle, o time de engenharia e fundadores saem juntos, deixando para trás apenas uma casca vazia. Custo em dinheiro: R$ 0!',
+    economicConcept: 'Capital Intelectual e Ativos Intangíveis: em empresas de base tecnológica, o valor reside nos talentos. Essa ameaça reduz o valuation para o invasor.',
+    quoteDraDefesa: 'Em tech, o código sem os desenvolvedores não vale nada. Gordon sabe que se nós sairmos, o valor das ações despenca 60% no dia seguinte.'
+  },
+  {
+    id: 'white_knight',
+    name: 'White Knight (Cavaleiro Branco)',
+    subtitle: 'Comprador Estratégico Amigável',
+    icon: '🛡️',
+    costCash: 0,
+    cashInflow: 30,
+    governanceDelta: +10,
+    effectiveness: 95,
+    shortDesc: 'Fundo parceiro aporta +R$ 30M no caixa e subscreve bloco de bloqueio pró-gestão.',
+    description: 'Encontra um fundo parceiro disposto a injetar R$ 30M via aumento de capital privado e assinar acordo de acionistas com voto vinculado ao seu mandato, barrando o Tubarão Gordon no Conselho.',
+    economicConcept: 'Aliança estratégica de bloqueio acionário: o Cavaleiro Branco resgata a empresa de um predador hostil, trazendo liquidez e blindagem societária.',
+    quoteDraDefesa: 'O fundo soberano Futuro Tech topa aportar R$ 30M no caixa em novas ações e assinar um acordo de acionistas com voto vinculado a nós. Xeque-mate no Gordon!'
+  },
+  {
+    id: 'crown_jewel',
+    name: 'Crown Jewel Defense',
+    subtitle: 'Venda da Joia da Coroa',
+    icon: '💎',
+    costCash: 0,
+    cashInflow: 25,
+    governanceDelta: -10,
+    effectiveness: 80,
+    shortDesc: 'Venda do ativo mais cobiçado a um parceiro. Injeta +R$ 25M de caixa e remove o atrativo de Gordon.',
+    description: 'Desfaz-se do ativo central que motiva a investida de Gordon (como o algoritmo de IA proprietário), gerando R$ 25M de liquidez imediata para o caixa e eliminando o interesse do agressor.',
+    economicConcept: 'Tática de terra arrasada (scorched-earth): ao alienar a divisão mais lucrativa ou estratégica, a empresa ganha liquidez e o agressor desiste da compra não solicitada.',
+    quoteDraDefesa: 'Gordon só quer nossa infraestrutura de IA. Se transferirmos o ativo para um parceiro estratégico, ele perde o apetite pelo nosso controle e ainda reforçamos o caixa!'
+  },
+  {
     id: 'poison_pill',
     name: 'Flip-in Poison Pill',
     subtitle: 'Pílula de Veneno Societária',
     icon: '💊',
     costCash: 12,
+    cashInflow: 0,
     governanceDelta: -5,
     effectiveness: 90,
     shortDesc: 'Permite a todos os acionistas (menos ao invasor) comprar ações com 50% de desconto.',
@@ -24,6 +67,7 @@ export const DEFENSE_CARDS = [
     subtitle: 'Pára-quedas Dourado dos Executivos',
     icon: '🪂',
     costCash: 8,
+    cashInflow: 0,
     governanceDelta: -20,
     effectiveness: 60,
     shortDesc: 'Cláusula de rescisão milionária caso a atual diretoria seja destituída.',
@@ -32,56 +76,18 @@ export const DEFENSE_CARDS = [
     quoteDraDefesa: 'Se Gordon assumir, terá que desembolsar R$ 25M apenas em rescisões para o nosso time. Ele vai pensar duas vezes, mas prepare-se para críticas na imprensa!'
   },
   {
-    id: 'crown_jewel',
-    name: 'Crown Jewel Defense',
-    subtitle: 'Venda da Joia da Coroa',
-    icon: '💎',
-    costCash: 5,
-    governanceDelta: -10,
-    effectiveness: 80,
-    shortDesc: 'Venda temporária do ativo ou patente mais cobiçada para um parceiro amigo.',
-    description: 'Desfaz-se do ativo central que motiva a investida de Gordon (como o algoritmo de IA proprietário), eliminando o atrativo da companhia para o invasor.',
-    economicConcept: 'Tática de terra arrasada (scorched-earth): ao alienar a divisão mais lucrativa ou estratégica, o agressor desiste da compra não solicitada.',
-    quoteDraDefesa: 'Gordon só quer nossa infraestrutura de IA. Se transferirmos o ativo para um parceiro estratégico, ele perde o apetite pelo nosso controle!'
-  },
-  {
-    id: 'white_knight',
-    name: 'White Knight (Cavaleiro Branco)',
-    subtitle: 'Comprador Estratégico Amigável',
-    icon: '🛡️',
-    costCash: 15,
-    governanceDelta: +10,
-    effectiveness: 95,
-    shortDesc: 'Busca por um investidor institucional amigável que compra um bloco de bloqueio.',
-    description: 'Encontra um fundo parceiro ou empresa aliada disposta a adquirir uma fatia de 25% com compromisso de manter a gestão e barrar o Tubarão Gordon no Conselho.',
-    economicConcept: 'Aliança estratégica de bloqueio acionário: o Cavaleiro Branco resgata a empresa de um predador hostil, garantindo continuidade e estabilidade estratégica.',
-    quoteDraDefesa: 'O fundo soberano Futuro Tech topa comprar 25% das ações em circulação e assinar um acordo de acionistas com voto vinculado a nós. Xeque-mate no Gordon!'
-  },
-  {
-    id: 'people_pill',
-    name: 'People Pill (Pílula das Pessoas)',
-    subtitle: 'Pacto de Renúncia Coletiva',
-    icon: '👥',
-    costCash: 4,
-    governanceDelta: -5,
-    effectiveness: 70,
-    shortDesc: 'Pacto formal em que todo o time chave de tecnologia pedirá demissão se Gordon vencer.',
-    description: 'A empresa é o seu capital humano. Se Gordon assumir o controle, o time de engenharia e fundadores saem juntos, deixando para trás apenas uma casca vazia.',
-    economicConcept: 'Capital Intelectual e Ativos Intangíveis: em empresas de base tecnológica, o valor reside nos talentos. Essa ameaça reduz o valuation para o invasor.',
-    quoteDraDefesa: 'Em tech, o código sem os desenvolvedores não vale nada. Gordon sabe que se nós sairmos, o valor das ações despenca 60% no dia seguinte.'
-  },
-  {
     id: 'pacman_defense',
     name: 'Pac-Man Defense',
     subtitle: 'Contra-Ataque Hostil',
     icon: '👾',
-    costCash: 40,
+    costCash: 35,
+    cashInflow: 0,
     governanceDelta: +5,
     effectiveness: 90,
     shortDesc: 'Lança uma contra-oferta para comprar a holding controlada pelo Tubarão Gordon!',
-    description: 'Inspirada no jogo arcade, a presa se vira e tenta devorar o caçador! Requer muito caixa, mas neutraliza totalmente a agressão hostil.',
+    description: 'Inspirada no jogo arcade, a presa se vira e tenta devorar o caçador! Requer liquidez ou crédito de debêntures, mas neutraliza totalmente a agressão hostil.',
     economicConcept: 'Contra-OPA (Counter Tender Offer): manobra audaciosa do direito societário em que a companhia-alvo vira o jogo e tenta o controle do próprio agressor.',
-    quoteDraDefesa: 'Se tivermos liquidez suficiente, viramos a mesa: lançamos uma oferta pública para comprar o veículo de investimento do Gordon!'
+    quoteDraDefesa: 'Se tivermos liquidez ou crédito de debêntures, viramos a mesa: lançamos uma contra-OPA fulminante no veículo de investimento do Gordon!'
   }
 ];
 
@@ -94,12 +100,17 @@ export class TakeoverEngine {
     const premiumPercent = 35; // 35% de prêmio oferecido aos acionistas
     const offerValue = Math.round(marketCap * (1 + premiumPercent / 100));
 
+    // No cenário de ataque hostil, o conselho amigável possui bloco vulnerável (ex: 38%)
+    // permitindo que Gordon (18%) ameace atingir a maioria junto ao Free Float (44%)
+    const friendlyStake = Math.min(38, playerState.friendlyControl || 38);
+    const freeFloat = Math.max(0, 100 - 18 - friendlyStake);
+
     return {
       active: true,
       stage: 'TENDER_OFFER_FILED',
       gordonInitialStake: 18, // Gordon já acumulou 18% no mercado secundário em segredo
-      friendlyStake: playerState.friendlyControl || 45,
-      freeFloat: 100 - 18 - (playerState.friendlyControl || 45),
+      friendlyStake,
+      freeFloat,
       premiumPercent,
       offerValue,
       turnTimeRemaining: 3,
@@ -113,17 +124,23 @@ export class TakeoverEngine {
   /**
    * Avalia a ativação de uma carta de defesa
    */
-  static playDefenseCard(cardId, attackScenario, playerState) {
+  static playDefenseCard(cardId, attackScenario, playerState, fundingMethod = 'CASH') {
     const card = DEFENSE_CARDS.find(c => c.id === cardId);
     if (!card) {
       return { success: false, reason: 'Carta de defesa inválida.' };
     }
 
-    if (playerState.cash < card.costCash) {
-      return {
-        success: false,
-        reason: `Caixa insuficiente para custear a manobra jurídica (Custo: R$ ${card.costCash}M | Disponível: R$ ${playerState.cash}M).`
-      };
+    let cashSpent = 0;
+    let cashGained = card.cashInflow || 0;
+    let debtAdded = 0;
+
+    if (card.costCash > 0) {
+      if (fundingMethod === 'CASH' && playerState.cash >= card.costCash) {
+        cashSpent = card.costCash;
+      } else {
+        // Se o caixa for insuficiente ou se optar por endividamento, emite debêntures emergenciais
+        debtAdded = card.costCash;
+      }
     }
 
     let updatedGordonStake = attackScenario.gordonInitialStake;
@@ -141,47 +158,64 @@ export class TakeoverEngine {
       case 'golden_parachute':
         // Aumenta o custo, mas Gordon ainda tenta se tiver margem
         updatedGordonStake = Math.max(0, updatedGordonStake - 4);
-        outcomeMessage = 'O Pára-quedas Dourado encareceu a aquisição em R$ 25M. Gordon recuou temporariamente, mas analistas da B3 criticaram duramente o conflito de agência dos executivos!';
+        outcomeMessage = 'O Pára-quedas Dourado encareceu a aquisição em R$ 25M em indenizações. Gordon recuou temporariamente diante do custo proibitivo de substituição dos executivos, mas analistas da B3 criticaram duramente o conflito de agência!';
         break;
 
       case 'crown_jewel':
-        // Desfaz-se do atrativo
+        // Desfaz-se do atrativo e injeta R$ 25M de caixa
         updatedGordonStake = Math.round(updatedGordonStake * 0.5);
-        outcomeMessage = 'A Joia da Coroa foi transferida para nosso parceiro estratégico. Sem o ativo chave de IA, Gordon abortou a maior parte das ordens de compra!';
+        outcomeMessage = 'A Joia da Coroa foi transferida para nosso parceiro estratégico com injeção de R$ 25M no caixa! Sem o ativo chave, Gordon abortou as ordens de compra na B3!';
         break;
 
       case 'white_knight':
-        // Cavaleiro Branco compra 25%
+        // Cavaleiro Branco compra 25% e aporta R$ 30M
         updatedFriendlyStake += 25;
-        updatedGordonStake = Math.min(15, updatedGordonStake);
-        outcomeMessage = 'O Cavaleiro Branco (White Knight) entrou na disputa e comprou 25% das ações em circulação! Juntos, o bloco de controle tem mais de 65% dos votos!';
+        updatedGordonStake = Math.min(12, Math.round(updatedGordonStake * 0.6));
+        outcomeMessage = 'O Cavaleiro Branco (White Knight) entrou na disputa, aportou R$ 30M no caixa e subscreveu 25% das ações em emissão privada! O bloco de controle agora tem ampla maioria!';
         break;
 
       case 'people_pill':
         updatedGordonStake = Math.round(updatedGordonStake * 0.6);
-        outcomeMessage = 'Pacto de renúncia assinado por 100% dos líderes de tecnologia. Gordon hesitou diante do risco de colapso operacional da plataforma!';
+        outcomeMessage = 'Pacto de renúncia assinado por 100% dos líderes de tecnologia sem custo financeiro. Gordon hesitou diante do risco de colapso operacional da plataforma!';
         break;
 
       case 'pacman_defense':
         updatedGordonStake = 0;
-        updatedFriendlyStake += 10;
-        outcomeMessage = 'Pac-Man Defense implacável! Lançamos uma contra-oferta fulminante e forçamos Gordon a capitular e vender suas ações com prejuízo!';
+        updatedFriendlyStake += 12;
+        outcomeMessage = 'Pac-Man Defense implacável! Lançamos uma contra-oferta fulminante financiada no mercado e forçamos Gordon a capitular!';
         break;
     }
 
     const freeFloat = Math.max(0, 100 - updatedGordonStake - updatedFriendlyStake);
-    const gordonDefeated = updatedGordonStake < 12 || updatedFriendlyStake >= 55;
+    const gordonDefeated = updatedGordonStake < 12 || updatedFriendlyStake >= 50;
 
     return {
       success: true,
       card,
-      cashSpent: card.costCash,
+      cashSpent,
+      cashGained,
+      debtAdded,
+      fundedViaDebt: debtAdded > 0,
       governanceChange: card.governanceDelta,
       updatedGordonStake,
       updatedFriendlyStake,
       freeFloat,
       gordonDefeated,
       outcomeMessage
+    };
+  }
+
+  /**
+   * Aceita a Oferta Pública de Aquisição (OPA) de Gordon (Opção do PRD)
+   */
+  static acceptGordonOffer(attackScenario, playerState) {
+    const severanceBonus = Math.round((playerState.marketCap || 300) * 0.08); // bônus de rescisão executiva
+    return {
+      success: true,
+      accepted: true,
+      gordonTakeoverWon: true,
+      severanceBonus,
+      outcomeMessage: `Você aceitou a Oferta Pública de Aquisição (OPA) de Gordon com 35% de prêmio aos acionistas. O Fundo Gordon Predator assume o controle da NexTech e nomeia uma nova diretoria. Você deixa a presidência com uma rescisão executiva de R$ ${severanceBonus}M.`
     };
   }
 }

@@ -148,10 +148,14 @@ export class UIManager {
     if (currentHHI >= 1500 && currentHHI <= 2500) hhiClass = 'pill-yellow';
     if (currentHHI > 2500) hhiClass = 'pill-red';
 
+    const isBroke = (s.cash || 0) < 0;
+    const cashClass = isBroke ? 'pill-red' : 'blue';
+    const cashTip = isBroke ? '⚠️ Déficit de Caixa! Empresa em Insolvência (Clique em Recuperação)' : 'Caixa Disponível para Aquisições';
+
     this.topStrip.innerHTML = `
-      <div class="m-strip-pill blue" title="Caixa Disponível para Aquisições">
+      <div class="m-strip-pill ${cashClass}" title="${cashTip}">
         <span class="strip-lbl">Caixa</span>
-        <span class="strip-val">R$ ${s.cash}M</span>
+        <span class="strip-val">${isBroke ? '⚠️ ' : ''}R$ ${s.cash}M</span>
       </div>
       <div class="m-strip-pill green" title="Valor de Mercado da Empresa (Market Cap)">
         <span class="strip-lbl">Market Cap</span>
@@ -534,6 +538,7 @@ export class UIManager {
       this.gordonAttackState = TakeoverEngine.createAttackScenario(s);
     }
     const attack = this.gordonAttackState;
+    const isBroke = (s.cash || 0) < 0;
 
     this.container.innerHTML = `
       <div class="chapter-card fade-in">
@@ -545,19 +550,99 @@ export class UIManager {
         <h2 class="chapter-title">O Dilema da Dra. Defesa</h2>
 
         <p class="narrative-text">
-          Escolha uma carta tática para defender seu controle. Cada mecanismo tem prós e contras no caixa e na governança:
+          O Tubarão Gordon protocolou uma oferta hostil na B3. Escolha uma tática para defender seu controle ou aceite a oferta para sair com prêmio:
         </p>
 
+        ${isBroke ? `
+          <!-- Alerta de Insolvência e Reestruturação Imediata -->
+          <div class="insolvency-alert-card">
+            <div class="iac-header">
+              <span class="iac-icon">🚨</span>
+              <div>
+                <h4>Alerta de Insolvência: Caixa Negativo (R$ ${s.cash}M)</h4>
+                <p>A companhia está a descoberto. Segundo a Lei 11.101/2005, você pode acionar a Recuperação Judicial (RJ) e levantar capital imediatamente via DIP Financing ou venda de UPI para regularizar a tesouraria!</p>
+              </div>
+            </div>
+            <div class="iac-buttons">
+              <button class="btn btn-sm btn-success btn-rj-quick" id="btn-quick-rj-dip">
+                ⚖️ Sanar Caixa via UPI / DIP (+R$ 45M de Liquidez)
+              </button>
+              <button class="btn btn-sm btn-outline-danger" id="btn-quick-bankruptcy">
+                🛑 Decretar Falência (Art. 75)
+              </button>
+            </div>
+          </div>
+        ` : ''}
+
         <!-- Widget de Estrutura de Votos Atual -->
-        <div class="ownership-box-wrapper">
+        <div class="ownership-box-wrapper mb-3">
           ${ChartRenderer.renderOwnershipBar(attack.friendlyStake, attack.gordonInitialStake, attack.freeFloat)}
         </div>
 
-        <div class="defense-cards-deck">
+        <!-- Box da Oferta de Gordon com Escolha de Aceitar (PRD) -->
+        <div class="tender-offer-card mb-3">
+          <div class="to-header">
+            <span>🦈 OPA Hostil de Gordon na B3</span>
+            <span class="badge badge-danger">+${attack.premiumPercent}% de Prêmio</span>
+          </div>
+          <p>
+            Gordon está oferecendo comprar as ações em circulação. O dilema central da governança: <strong>proteger a empresa ou aceitar a oferta e capitular?</strong>
+          </p>
+          <div class="to-action-row mt-2">
+            <button class="btn btn-outline-danger btn-block btn-sm" id="btn-accept-gordon">
+              🤝 Aceitar Oferta de Gordon (Sair da Empresa com Prêmio de 35%)
+            </button>
+          </div>
+        </div>
+
+        <div class="character-dialogue-card" style="border-left-color: ${CHARACTERS.defesa.themeColor}">
+          <div class="char-header">
+            <div class="char-avatar-mini">${CHARACTERS.defesa.avatarSvg}</div>
+            <div>
+              <strong style="color: ${CHARACTERS.defesa.themeColor}">${CHARACTERS.defesa.name}</strong>
+              <small>Advogada Societária</small>
+            </div>
+          </div>
+          <p class="dialogue-bubble">
+            “Se optar por resistir ao Gordon, selecione uma carta abaixo. A <strong>People Pill</strong> tem custo zero, o <strong>White Knight</strong> e a <strong>Crown Jewel</strong> injetam caixa na companhia, e as demais podem ser financiadas com caixa ou debêntures!”
+          </p>
+        </div>
+
+        <div class="defense-cards-deck mt-3">
           ${DEFENSE_CARDS.map(card => {
-            const canAfford = s.cash >= card.costCash;
+            const hasCash = s.cash >= card.costCash;
+            const hasInflow = (card.cashInflow || 0) > 0;
+            const isFree = card.costCash === 0;
+
+            let buttonHtml = '';
+            if (hasInflow) {
+              buttonHtml = `
+                <button class="btn btn-sm btn-success btn-block btn-play-card" data-card="${card.id}" data-mode="inflow">
+                  💎 Ativar ${card.name} (+R$ ${card.cashInflow}M de Caixa)
+                </button>
+              `;
+            } else if (isFree) {
+              buttonHtml = `
+                <button class="btn btn-sm btn-primary btn-block btn-play-card" data-card="${card.id}" data-mode="free">
+                  👥 Ativar ${card.name} (Custo R$ 0)
+                </button>
+              `;
+            } else if (hasCash) {
+              buttonHtml = `
+                <button class="btn btn-sm btn-primary btn-block btn-play-card" data-card="${card.id}" data-mode="cash">
+                  🛡️ Ativar ${card.name} (Pagar R$ ${card.costCash}M)
+                </button>
+              `;
+            } else {
+              buttonHtml = `
+                <button class="btn btn-sm btn-warning btn-block btn-play-card" data-card="${card.id}" data-mode="debt">
+                  💳 Ativar via Debêntures (+R$ ${card.costCash}M Dívida)
+                </button>
+              `;
+            }
+
             return `
-              <div class="defense-card-item ${!canAfford ? 'disabled' : ''}">
+              <div class="defense-card-item">
                 <div class="dc-top">
                   <span class="dc-icon">${card.icon}</span>
                   <div class="dc-title-wrap">
@@ -569,8 +654,8 @@ export class UIManager {
                 <p class="dc-desc">${card.shortDesc}</p>
 
                 <div class="dc-stats-row">
-                  <span class="dc-cost ${canAfford ? 'text-green' : 'text-danger'}">
-                    Custo: R$ ${card.costCash}M
+                  <span class="dc-cost ${hasInflow ? 'text-green' : isFree ? 'text-cyan' : hasCash ? 'text-green' : 'text-yellow'}">
+                    ${hasInflow ? `+R$ ${card.cashInflow}M Caixa` : isFree ? 'Custo: R$ 0M' : hasCash ? `Custo: R$ ${card.costCash}M Caixa` : `Financiável: R$ ${card.costCash}M Debêntures`}
                   </span>
                   <span class="dc-gov ${card.governanceDelta >= 0 ? 'text-green' : 'text-danger'}">
                     Gov: ${card.governanceDelta >= 0 ? '+' : ''}${card.governanceDelta}%
@@ -581,11 +666,7 @@ export class UIManager {
                   📖 <strong>Conceito:</strong> ${card.economicConcept}
                 </div>
 
-                <button class="btn btn-sm btn-primary btn-block btn-play-card" 
-                        data-card="${card.id}" 
-                        ${!canAfford ? 'disabled' : ''}>
-                  ${canAfford ? `Ativar ${card.name}` : 'Caixa Insuficiente'}
-                </button>
+                ${buttonHtml}
               </div>
             `;
           }).join('')}
@@ -593,17 +674,138 @@ export class UIManager {
       </div>
     `;
 
+    // Event listeners
+    const rjBtn = document.getElementById('btn-quick-rj-dip');
+    if (rjBtn) {
+      rjBtn.addEventListener('click', () => {
+        this.executeEmergencyRJ();
+      });
+    }
+
+    const bankruptBtn = document.getElementById('btn-quick-bankruptcy');
+    if (bankruptBtn) {
+      bankruptBtn.addEventListener('click', () => {
+        this.executeBankruptcy();
+      });
+    }
+
+    const acceptGordonBtn = document.getElementById('btn-accept-gordon');
+    if (acceptGordonBtn) {
+      acceptGordonBtn.addEventListener('click', () => {
+        this.executeAcceptGordonOffer();
+      });
+    }
+
     this.container.querySelectorAll('.btn-play-card').forEach(btn => {
       btn.addEventListener('click', () => {
         const cardId = btn.dataset.card;
-        this.executeDefenseCard(cardId);
+        const mode = btn.dataset.mode || 'cash';
+        this.executeDefenseCard(cardId, mode);
       });
     });
   }
 
-  executeDefenseCard(cardId) {
+  executeEmergencyRJ() {
     const s = StateManager.state;
-    const res = TakeoverEngine.playDefenseCard(cardId, this.gordonAttackState, s);
+    Sound.playMoney();
+    const res = CrisisEngine.applyRJTool('sell_upi', s);
+    StateManager.update({
+      cash: res.updatedCash,
+      debt: res.updatedDebt,
+      marketCap: res.updatedMarketCap,
+      rjApproved: true
+    });
+    StateManager.addLog('Reestruturação de Emergência: Venda judicial de UPI injetou +R$ 45M no caixa.');
+    StateManager.unlockBadge({
+      id: 'badge_distressed_pro',
+      title: 'Mestre em Distressed M&A',
+      icon: '🏭',
+      desc: 'Utilizou a venda judicial de UPI para sanar a liquidez da companhia.'
+    });
+    this.showEducationalModal({
+      title: 'Recuperação Judicial & UPI Homologadas!',
+      badge: 'Lei 11.101/2005',
+      icon: '⚖️',
+      content: `
+        <p>O juiz da Vara de Falências e Recuperações deferiu o processamento do plano de recuperação!</p>
+        <hr class="divider"/>
+        <h4>🎓 Como a UPI sanou o fluxo de caixa:</h4>
+        <p>
+          Pelo <strong>Art. 60 da Lei 11.101/05</strong>, a venda de uma <strong>Unidade Produtiva Isolada (UPI)</strong> foi realizada em leilão judicial <em>sem sucessão de dívidas fiscais ou trabalhistas</em> para o comprador. Isso atraiu um investidor estratégico que pagou <strong>+R$ 45M à vista</strong>, estancando a insolvência e permitindo que a companhia continue operando!
+        </p>
+      `,
+      onClose: () => {
+        this.render();
+      }
+    });
+  }
+
+  executeBankruptcy() {
+    const s = StateManager.state;
+    Sound.playCrisis();
+    StateManager.update({
+      cash: 0,
+      marketCap: Math.round(s.marketCap * 0.2),
+      governanceScore: 20,
+      bankruptcyDeclared: true
+    });
+    StateManager.addLog('Falência decretada: A empresa encerrou as atividades e entrou em liquidação judicial.');
+    this.showEducationalModal({
+      title: 'Falência Decretada (Art. 75 da Lei 11.101/05)',
+      badge: 'Liquidação Judicial',
+      icon: '🛑',
+      content: `
+        <p>A companhia teve sua autofalência decretada pelo juiz. Foi nomeado um Administrador Judicial para leiloar os bens e pagar credores na ordem legal de preferência.</p>
+        <hr class="divider"/>
+        <h4>🎓 Lição sobre Destruição de Valor na Falência:</h4>
+        <p>
+          Na falência, o valor como negócio em marcha (<em>going concern</em>) é aniquilado. Marcas, clientes e capital intelectual são perdidos. O leilão ocorre a preço de liquidação forçada para pagar a ordem legal de credores (trabalhistas, garantias reais e quirografários).
+        </p>
+      `,
+      onClose: () => {
+        StateManager.setChapter(7);
+      }
+    });
+  }
+
+  executeAcceptGordonOffer() {
+    const s = StateManager.state;
+    Sound.playCrisis();
+    const res = TakeoverEngine.acceptGordonOffer(this.gordonAttackState, s);
+    StateManager.update({
+      cash: s.cash + res.severanceBonus,
+      gordonWonTakeover: true
+    });
+    StateManager.addLog('OPA Aceita: Tubarão Gordon assumiu o controle da NexTech Brasil.');
+    this.showEducationalModal({
+      title: 'Controle Transferido ao Tubarão Gordon!',
+      badge: 'Aquisição Hostil Concluída',
+      icon: '🦈',
+      content: `
+        <div class="char-header mb-3">
+          <div class="char-avatar-mini">${CHARACTERS.gordon.avatarSvg}</div>
+          <div>
+            <strong>${CHARACTERS.gordon.name}</strong>
+            <small>Novo Controlador da NexTech</small>
+          </div>
+        </div>
+        <p>${res.outcomeMessage}</p>
+        <hr class="divider"/>
+        <h4>🎓 Lição Econômica do Mercado de Controle:</h4>
+        <p>
+          O mercado de controle corporativo (Henry Manne, 1965) atua como um <strong>mecanismo externo de governança</strong>. Quando a administração não maximiza o valor dos ativos ou comete erros estratégicos, investidores ativistas adquirem o controle pagando prêmio aos acionistas para trocar a gestão.
+        </p>
+      `,
+      onClose: () => {
+        StateManager.setChapter(7);
+      }
+    });
+  }
+
+  executeDefenseCard(cardId, mode = 'cash') {
+    const s = StateManager.state;
+    const fundingMethod = mode === 'debt' ? 'DEBT' : 'CASH';
+    const res = TakeoverEngine.playDefenseCard(cardId, this.gordonAttackState, s, fundingMethod);
 
     if (!res.success) {
       alert(res.reason);
@@ -617,16 +819,19 @@ export class UIManager {
     this.gordonAttackState.friendlyStake = res.updatedFriendlyStake;
     this.gordonAttackState.freeFloat = res.freeFloat;
 
-    const newCash = s.cash - res.cashSpent;
+    const newCash = s.cash - res.cashSpent + (res.cashGained || 0);
+    const newDebt = (s.debt || 0) + (res.debtAdded || 0);
     const newGov = Math.max(10, Math.min(100, s.governanceScore + res.governanceChange));
 
     StateManager.update({
       cash: newCash,
+      debt: newDebt,
       governanceScore: newGov,
       defensesUsed: [...s.defensesUsed, res.card.id]
     });
 
-    StateManager.addLog(`Defesa societária: Ativou ${res.card.name}. Stake de Gordon caiu para ${res.updatedGordonStake}%.`);
+    const fundNote = res.fundedViaDebt ? ' (financiada via debêntures)' : res.cashGained > 0 ? ` (injetou +R$ ${res.cashGained}M no caixa)` : '';
+    StateManager.addLog(`Defesa societária: Ativou ${res.card.name}${fundNote}. Gordon: ${res.updatedGordonStake}%, Bloco: ${res.updatedFriendlyStake}%.`);
 
     if (res.gordonDefeated) {
       Sound.playVictory();
@@ -661,7 +866,7 @@ export class UIManager {
         }
       });
     } else {
-      this.renderChapter4();
+      this.render();
     }
   }
 
@@ -765,7 +970,9 @@ export class UIManager {
     if (submitBtn && sim.analysis.canPass) {
       submitBtn.addEventListener('click', () => {
         Sound.playCadeApproved();
-        const exec = MNAEngine.executeMerger(s, target, 'CASH', this.hhiSimData.remedy);
+        const totalReq = target.purchaseCost + target.integrationCost;
+        const fundingMode = (s.cash || 0) >= totalReq ? 'CASH' : 'STOCK';
+        const exec = MNAEngine.executeMerger(s, target, fundingMode, this.hhiSimData.remedy);
         
         StateManager.update({
           cash: s.cash + exec.cashChange,
@@ -776,7 +983,8 @@ export class UIManager {
           cadeHistory: [...s.cadeHistory, { target: target.name, verdict: sim.analysis }]
         });
 
-        StateManager.addLog(`Fusão Horizontal aprovada no CADE: ${target.name}. HHI Final: ${sim.postHHI} pts.`);
+        const fundNote = fundingMode === 'STOCK' ? ' (via troca de ações/diluição)' : '';
+        StateManager.addLog(`Fusão Horizontal aprovada no CADE: ${target.name}${fundNote}. HHI Final: ${sim.postHHI} pts.`);
         StateManager.unlockBadge({
           id: 'badge_cade_cleared',
           title: 'Aprovado pelo CADE',
@@ -1138,11 +1346,17 @@ export class UIManager {
 
                 ${isAcquired ? `
                   <button class="btn btn-secondary btn-block" disabled>✅ Empresa já Adquirida</button>
-                ` : `
+                ` : canAfford ? `
                   <button class="btn btn-primary btn-block btn-buy-target" 
                           data-id="${target.id}" 
-                          ${!canAfford ? 'disabled' : ''}>
-                    ${canAfford ? `Adquirir por R$ ${target.purchaseCost + target.integrationCost}M` : 'Caixa Insuficiente'}
+                          data-mode="CASH">
+                    Adquirir por R$ ${target.purchaseCost + target.integrationCost}M (Caixa)
+                  </button>
+                ` : `
+                  <button class="btn btn-warning btn-block btn-buy-target" 
+                          data-id="${target.id}" 
+                          data-mode="STOCK">
+                    Adquirir via Troca de Ações (Stock Swap)
                   </button>
                 `}
               </div>
@@ -1164,15 +1378,17 @@ export class UIManager {
           return;
         }
 
+        const mode = btn.dataset.mode || 'CASH';
         Sound.playMoney();
-        const exec = MNAEngine.executeMerger(s, target, 'CASH');
+        const exec = MNAEngine.executeMerger(s, target, mode);
         StateManager.update({
           cash: s.cash + exec.cashChange,
           marketCap: s.marketCap + exec.marketCapChange,
           marketShare: s.marketShare + exec.marketShareChange,
           acquisitions: [...s.acquisitions, target]
         });
-        StateManager.addLog(`M&A Concluído: Aquisição de ${target.name}.`);
+        const note = mode === 'STOCK' ? ' (via troca de ações / diluição)' : '';
+        StateManager.addLog(`M&A Concluído: Aquisição de ${target.name}${note}.`);
         this.renderMNALab();
       });
     });
@@ -1287,6 +1503,7 @@ export class UIManager {
       this.gordonAttackState = TakeoverEngine.createAttackScenario(s);
     }
     const attack = this.gordonAttackState;
+    const isBroke = (s.cash || 0) < 0;
 
     this.container.innerHTML = `
       <div class="chapter-card fade-in">
@@ -1297,12 +1514,46 @@ export class UIManager {
 
         <h2 class="chapter-title">Defesas contra Takeovers Hostis</h2>
         <p class="narrative-text">
-          O Tubarão Gordon atua como o carrasco externo da B3. Use seu arsenal estatutário da Dra. Defesa para repelir ofertas predatórias!
+          O Tubarão Gordon atua como o carrasco externo da B3. Use seu arsenal estatutário da Dra. Defesa para repelir ofertas predatórias ou aceite a oferta para sair com prêmio:
         </p>
+
+        ${isBroke ? `
+          <!-- Alerta de Insolvência e Reestruturação Imediata -->
+          <div class="insolvency-alert-card">
+            <div class="iac-header">
+              <span class="iac-icon">🚨</span>
+              <div>
+                <h4>Crise de Liquidez: Caixa Negativo (R$ ${s.cash}M)</h4>
+                <p>A companhia está a descoberto. Recupere o caixa via Recuperação Judicial (venda de UPI / DIP Financing) para regularizar a tesouraria!</p>
+              </div>
+            </div>
+            <div class="iac-buttons">
+              <button class="btn btn-sm btn-success btn-rj-quick" id="btn-war-rj-dip">
+                ⚖️ Sanar Caixa via UPI / DIP (+R$ 45M de Liquidez)
+              </button>
+            </div>
+          </div>
+        ` : ''}
 
         <!-- Termômetro Acionário -->
         <div class="ownership-box-wrapper mb-3">
           ${ChartRenderer.renderOwnershipBar(attack.friendlyStake, attack.gordonInitialStake, attack.freeFloat)}
+        </div>
+
+        <!-- Box da Oferta de Gordon com Escolha de Aceitar -->
+        <div class="tender-offer-card mb-3">
+          <div class="to-header">
+            <span>🦈 OPA Hostil de Gordon na B3</span>
+            <span class="badge badge-danger">+${attack.premiumPercent}% de Prêmio</span>
+          </div>
+          <p>
+            Gordon está oferecendo comprar as ações em circulação com 35% de prêmio aos acionistas.
+          </p>
+          <div class="to-action-row mt-2">
+            <button class="btn btn-outline-danger btn-block btn-sm" id="btn-war-accept-gordon">
+              🤝 Aceitar Oferta Hostil de Gordon (Sair com Rescisão Executiva)
+            </button>
+          </div>
         </div>
 
         <div class="character-dialogue-card" style="border-left-color: ${CHARACTERS.defesa.themeColor}">
@@ -1314,15 +1565,45 @@ export class UIManager {
             </div>
           </div>
           <p class="dialogue-bubble">
-            “Selecione uma tática abaixo. Lembre-se: Poison Pills diluem o agressor, Golden Parachutes encarecem as demissões e White Knights trazem parceiros de longo prazo.”
+            “Selecione uma tática abaixo. Lembre-se: a <strong>People Pill</strong> tem custo zero, <strong>Crown Jewel</strong> e <strong>White Knight</strong> injetam caixa, e as demais podem ser financiadas com caixa ou debêntures.”
           </p>
         </div>
 
         <div class="defense-cards-deck mt-3">
           ${DEFENSE_CARDS.map(card => {
-            const canAfford = s.cash >= card.costCash;
+            const hasCash = s.cash >= card.costCash;
+            const hasInflow = (card.cashInflow || 0) > 0;
+            const isFree = card.costCash === 0;
+
+            let buttonHtml = '';
+            if (hasInflow) {
+              buttonHtml = `
+                <button class="btn btn-sm btn-success btn-block btn-war-play" data-card="${card.id}" data-mode="inflow">
+                  💎 Ativar ${card.name} (+R$ ${card.cashInflow}M de Caixa)
+                </button>
+              `;
+            } else if (isFree) {
+              buttonHtml = `
+                <button class="btn btn-sm btn-primary btn-block btn-war-play" data-card="${card.id}" data-mode="free">
+                  👥 Ativar ${card.name} (Custo R$ 0)
+                </button>
+              `;
+            } else if (hasCash) {
+              buttonHtml = `
+                <button class="btn btn-sm btn-primary btn-block btn-war-play" data-card="${card.id}" data-mode="cash">
+                  🛡️ Ativar ${card.name} (Pagar R$ ${card.costCash}M)
+                </button>
+              `;
+            } else {
+              buttonHtml = `
+                <button class="btn btn-sm btn-warning btn-block btn-war-play" data-card="${card.id}" data-mode="debt">
+                  💳 Ativar via Debêntures (+R$ ${card.costCash}M Dívida)
+                </button>
+              `;
+            }
+
             return `
-              <div class="defense-card-item ${!canAfford ? 'disabled' : ''}">
+              <div class="defense-card-item">
                 <div class="dc-top">
                   <span class="dc-icon">${card.icon}</span>
                   <div>
@@ -1332,14 +1613,12 @@ export class UIManager {
                 </div>
                 <p class="dc-desc">${card.shortDesc}</p>
                 <div class="dc-stats-row">
-                  <span class="${canAfford ? 'text-green' : 'text-danger'}">Custo: R$ ${card.costCash}M</span>
+                  <span class="${hasInflow ? 'text-green' : isFree ? 'text-cyan' : hasCash ? 'text-green' : 'text-yellow'}">
+                    ${hasInflow ? `+R$ ${card.cashInflow}M Caixa` : isFree ? 'Custo: R$ 0M' : hasCash ? `Custo: R$ ${card.costCash}M` : `Financiável: R$ ${card.costCash}M Debêntures`}
+                  </span>
                   <span class="${card.governanceDelta >= 0 ? 'text-green' : 'text-danger'}">Gov: ${card.governanceDelta}%</span>
                 </div>
-                <button class="btn btn-sm btn-primary btn-block btn-war-play" 
-                        data-card="${card.id}" 
-                        ${!canAfford ? 'disabled' : ''}>
-                  Ativar Tática
-                </button>
+                ${buttonHtml}
               </div>
             `;
           }).join('')}
@@ -1347,10 +1626,25 @@ export class UIManager {
       </div>
     `;
 
+    const rjBtn = document.getElementById('btn-war-rj-dip');
+    if (rjBtn) {
+      rjBtn.addEventListener('click', () => {
+        this.executeEmergencyRJ();
+      });
+    }
+
+    const acceptGordonBtn = document.getElementById('btn-war-accept-gordon');
+    if (acceptGordonBtn) {
+      acceptGordonBtn.addEventListener('click', () => {
+        this.executeAcceptGordonOffer();
+      });
+    }
+
     this.container.querySelectorAll('.btn-war-play').forEach(btn => {
       btn.addEventListener('click', () => {
         const cardId = btn.dataset.card;
-        this.executeDefenseCard(cardId);
+        const mode = btn.dataset.mode || 'cash';
+        this.executeDefenseCard(cardId, mode);
         this.renderDefenseWarRoom();
       });
     });

@@ -3,7 +3,7 @@
  * Service Worker para funcionamento 100% Offline do AnimM&A (PWA)
  */
 
-const CACHE_NAME = 'anim-mna-v1.0.0';
+const CACHE_NAME = 'anim-mna-v1.0.1';
 
 const ASSETS_TO_CACHE = [
   './',
