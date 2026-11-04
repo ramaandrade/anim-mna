@@ -3,7 +3,7 @@
  * Service Worker para funcionamento 100% Offline do AnimM&A (PWA)
  */
 
-const CACHE_NAME = 'anim-mna-v1.0.2';
+const CACHE_NAME = 'anim-mna-v1.0.3';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -23,6 +23,7 @@ const ASSETS_TO_CACHE = [
   './js/historicalScenarios.js',
   './js/chartRenderer.js',
   './js/audioEffects.js',
+  './js/sandboxPresets.js',
   './assets/icons/icon-192.svg',
   './assets/icons/icon-512.svg'
 ];

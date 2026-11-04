@@ -12,6 +12,7 @@ import { CrisisEngine } from './crisisEngine.js';
 import { HISTORICAL_SCENARIOS } from './historicalScenarios.js';
 import { ChartRenderer } from './chartRenderer.js';
 import { Sound } from './audioEffects.js';
+import { SANDBOX_PRESETS } from './sandboxPresets.js';
 
 export class UIManager {
   constructor() {
@@ -27,11 +28,50 @@ export class UIManager {
       remedy: 0
     };
 
+    // Estado local para Modo Sandbox Livre
+    this.sandboxData = {
+      presetKey: 'tech_2025',
+      companies: JSON.parse(JSON.stringify(SANDBOX_PRESETS.tech_2025.companies)),
+      acquirerId: SANDBOX_PRESETS.tech_2025.defaultAcquirerId,
+      targetId: SANDBOX_PRESETS.tech_2025.defaultTargetId,
+      remedy: 0
+    };
+
+    this.lastTab = null;
+    this.lastChapter = null;
+
     // Estado local para ataque de Gordon
     this.gordonAttackState = null;
 
     this.initEvents();
     this.render();
+  }
+
+  scrollToTop() {
+    if (this.container) {
+      this.container.scrollTop = 0;
+    }
+    window.scrollTo(0, 0);
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }
+
+  showToast(message, type = 'info', duration = 3500) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.className = 'toast-container';
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = `toast-pill toast-${type} fade-down`;
+    toast.innerHTML = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      setTimeout(() => toast.remove(), 400);
+    }, duration);
   }
 
   initEvents() {
@@ -86,7 +126,7 @@ export class UIManager {
   updateActiveTabButton(tabKey) {
     const tabs = document.querySelectorAll('.nav-tab-btn');
     tabs.forEach(t => {
-      if (t.dataset.tab === tabKey) {
+      if (t.dataset.tab === tabKey || (tabKey === 'sandbox' && t.dataset.tab === 'cade')) {
         t.classList.add('active');
       } else {
         t.classList.remove('active');
@@ -98,6 +138,13 @@ export class UIManager {
     const state = StateManager.state;
     this.renderTopStrip();
     this.updateActiveTabButton(state.activeTab);
+
+    // Se houve mudança de aba ou de capítulo, reseta a rolagem para o topo
+    if (state.activeTab !== this.lastTab || state.currentChapter !== this.lastChapter) {
+      this.scrollToTop();
+      this.lastTab = state.activeTab;
+      this.lastChapter = state.currentChapter;
+    }
 
     // Se estiver na aba jornada, renderiza o stepper
     if (state.activeTab === 'journey') {
@@ -117,6 +164,9 @@ export class UIManager {
           break;
         case 'cade':
           this.renderCADESimulator();
+          break;
+        case 'sandbox':
+          this.renderSandbox();
           break;
         case 'defense':
           this.renderDefenseWarRoom();
@@ -1327,8 +1377,10 @@ export class UIManager {
     });
 
     document.getElementById('btn-explore-sandbox').addEventListener('click', () => {
-      Sound.playClick();
-      StateManager.setActiveTab('cade');
+      Sound.playSuccess();
+      StateManager.setActiveTab('sandbox');
+      this.showToast('🧪 <strong>Modo Sandbox Livre Ativado!</strong><br>Simule qualquer fusão e teste o CADE sem restrições.', 'success');
+      this.scrollToTop();
     });
   }
 
@@ -1505,6 +1557,16 @@ export class UIManager {
           <input type="range" min="0" max="12" step="1" value="${this.hhiSimData.remedy}" id="cade-sandbox-remedy" class="range-slider">
         </div>
 
+        <!-- Banner de Acesso ao Sandbox Completo -->
+        <div class="sandbox-banner-link mt-3 mb-2">
+          <p style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 6px;">
+            Quer customizar empresas, alterar fatias de mercado livremente ou testar casos reais como Sadia/Perdigão e Ambev?
+          </p>
+          <button class="btn btn-primary btn-block" id="btn-open-full-sandbox">
+            🧪 Abrir Modo Sandbox Completo & Presets ➔
+          </button>
+        </div>
+
         <!-- Tabela Didática de Critérios CADE -->
         <div class="cade-criteria-table mt-4">
           <h4>🏛️ Critérios Oficiais de Concentração (Guia CADE):</h4>
@@ -1544,6 +1606,269 @@ export class UIManager {
         this.hhiSimData.remedy = Number(e.target.value);
         this.renderCADESimulator();
       });
+    }
+
+    const openSbBtn = document.getElementById('btn-open-full-sandbox');
+    if (openSbBtn) {
+      openSbBtn.addEventListener('click', () => {
+        Sound.playClick();
+        StateManager.setActiveTab('sandbox');
+        this.showToast('🧪 <strong>Modo Sandbox Completo Aberto!</strong><br>Explore fatias de mercado e decisões antitruste.', 'success');
+      });
+    }
+  }
+
+  /* ========================================================
+   * ABA DE MODO SANDBOX LIVRE (SIMULADOR HHI & M&A ABERTO)
+   * ======================================================== */
+  renderSandbox() {
+    const pKey = this.sandboxData.presetKey;
+    const currentPreset = SANDBOX_PRESETS[pKey] || SANDBOX_PRESETS.tech_2025;
+    const companies = this.sandboxData.companies;
+
+    // Garante que adquirente e alvo sejam válidos e diferentes
+    if (!companies.some(c => c.id === this.sandboxData.acquirerId)) {
+      this.sandboxData.acquirerId = companies[0].id;
+    }
+    if (!companies.some(c => c.id === this.sandboxData.targetId) || this.sandboxData.targetId === this.sandboxData.acquirerId) {
+      const other = companies.find(c => c.id !== this.sandboxData.acquirerId);
+      this.sandboxData.targetId = other ? other.id : companies[1].id;
+    }
+
+    const sim = HHIEngine.simulateMerger(
+      companies,
+      this.sandboxData.acquirerId,
+      this.sandboxData.targetId,
+      this.sandboxData.remedy
+    );
+
+    this.container.innerHTML = `
+      <div class="chapter-card fade-in">
+        <div class="sandbox-hero-badge">
+          <span class="sb-tag">🧪 MODO SANDBOX LIVRE</span>
+          <span class="badge badge-info">Laboratório Aberto</span>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <button class="btn btn-sm btn-outline-secondary" id="btn-sandbox-back">
+            🔙 Voltar ao Relatório
+          </button>
+          <button class="btn btn-sm btn-outline-primary" id="btn-sandbox-to-journey">
+            🧭 Jornada Principal
+          </button>
+        </div>
+
+        <h2 class="chapter-title mt-2">Simulador Aberto de HHI & Fusões</h2>
+        <p class="narrative-text">
+          Neste ambiente livre, você tem controle total para testar fusões, calibrar fatias de mercado em tempo real e simular a aprovação com remédios do Inspetor CADE!
+        </p>
+
+        <!-- Presets de Mercado -->
+        <div class="sandbox-presets-section mt-3">
+          <h4>⚡ Cenários Rápidos & Casos Históricos:</h4>
+          <div class="sandbox-presets-bar">
+            ${Object.keys(SANDBOX_PRESETS).map(key => {
+              const p = SANDBOX_PRESETS[key];
+              const isActive = key === pKey ? 'active' : '';
+              return `
+                <button class="sandbox-preset-chip ${isActive}" data-preset="${key}">
+                  ${p.title}
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="sandbox-preset-info mt-2">
+            <strong>${currentPreset.tag}</strong>: ${currentPreset.description}
+            <br>
+            <small>📚 <em>${currentPreset.historicalFact}</em></small>
+          </div>
+        </div>
+
+        <!-- Seleção de Fusão: Compradora e Alvo -->
+        <div class="sandbox-select-grid mt-2">
+          <div class="sandbox-select-box">
+            <label for="sb-select-acquirer">🏢 Empresa Compradora (A)</label>
+            <select id="sb-select-acquirer" class="sandbox-select">
+              ${companies.map(c => `
+                <option value="${c.id}" ${c.id === this.sandboxData.acquirerId ? 'selected' : ''}>
+                  ${c.name} (${c.share}%)
+                </option>
+              `).join('')}
+            </select>
+          </div>
+
+          <div class="sandbox-select-box">
+            <label for="sb-select-target">🎯 Empresa Alvo (B)</label>
+            <select id="sb-select-target" class="sandbox-select">
+              ${companies.map(c => `
+                <option value="${c.id}" ${c.id === this.sandboxData.targetId ? 'selected' : ''} ${c.id === this.sandboxData.acquirerId ? 'disabled' : ''}>
+                  ${c.name} (${c.share}%)
+                </option>
+              `).join('')}
+            </select>
+          </div>
+        </div>
+
+        <!-- Gráfico Donut Interativo Pós-Fusão -->
+        <div class="hhi-interactive-panel mt-3">
+          <h3>Fatias de Mercado Resultantes (Pós-Operação)</h3>
+          ${ChartRenderer.renderMarketDonut(sim.postCompanies, 240, 'Share do Setor')}
+          
+          <div class="mt-3">
+            ${ChartRenderer.renderHHIBar(sim.preHHI, sim.postHHI, sim.deltaHHI)}
+          </div>
+        </div>
+
+        <!-- Parecer Oficial do CADE -->
+        <div class="cade-verdict-card mt-3" style="border-color: ${sim.analysis.color}">
+          <div class="verdict-header">
+            <div class="char-avatar-mini">${CHARACTERS.cade.avatarSvg}</div>
+            <div>
+              <span class="badge ${sim.analysis.badgeClass}">${sim.analysis.badge}</span>
+              <h4 style="color: ${sim.analysis.color}">${sim.analysis.title}</h4>
+            </div>
+          </div>
+          <p class="inspector-quote">“${sim.analysis.inspectorQuote}”</p>
+          <p class="verdict-desc">${sim.analysis.explanation}</p>
+        </div>
+
+        <!-- Slider de Remédio Estrutural -->
+        <div class="remedy-slider-box mt-3">
+          <div class="rs-header">
+            <span>⚙️ Remédio Antitruste (Desinvestimento Ativo)</span>
+            <strong class="text-cyan">${this.sandboxData.remedy}% de Market Share Cedido</strong>
+          </div>
+          <p class="rs-sub">Venda divisões ou marcas para reduzir o HHI e garantir aprovação no Tribunal:</p>
+          <input type="range" min="0" max="25" step="1" value="${this.sandboxData.remedy}" id="sb-remedy-slider" class="range-slider">
+        </div>
+
+        <!-- Sliders de Fatias de Mercado Individuais -->
+        <div class="mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4>🎛️ Personalizar Fatias de Mercado (%):</h4>
+            <span class="badge badge-outline-cyan">Soma = 100%</span>
+          </div>
+          <p class="text-muted" style="font-size: 11px; margin-bottom: 8px;">
+            Ajuste os percentuais para simular cenários de maior concentração ou rivalidade:
+          </p>
+
+          ${companies.map(c => `
+            <div class="sandbox-company-slider">
+              <div class="sc-header">
+                <span class="sc-name">
+                  <span class="sc-dot" style="background: ${c.color || '#38bdf8'}"></span>
+                  <strong>${c.name}</strong>
+                </span>
+                <span class="sc-val">${c.share}%</span>
+              </div>
+              <input type="range" min="1" max="75" step="1" value="${c.share}" 
+                     class="range-slider sb-share-slider" 
+                     data-company-id="${c.id}"
+                     style="accent-color: ${c.color || '#38bdf8'}">
+            </div>
+          `).join('')}
+        </div>
+
+        <button class="btn btn-outline-secondary btn-block mt-3" id="btn-sandbox-reset">
+          🔄 Restaurar Parâmetros deste Cenário
+        </button>
+      </div>
+    `;
+
+    // Event Listeners do Sandbox
+    document.getElementById('btn-sandbox-back')?.addEventListener('click', () => {
+      Sound.playClick();
+      StateManager.setActiveTab('report');
+    });
+
+    document.getElementById('btn-sandbox-to-journey')?.addEventListener('click', () => {
+      Sound.playClick();
+      StateManager.setActiveTab('journey');
+    });
+
+    // Preset Chips
+    document.querySelectorAll('.sandbox-preset-chip').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        Sound.playClick();
+        const pId = e.currentTarget.dataset.preset;
+        if (SANDBOX_PRESETS[pId]) {
+          this.sandboxData.presetKey = pId;
+          this.sandboxData.companies = JSON.parse(JSON.stringify(SANDBOX_PRESETS[pId].companies));
+          this.sandboxData.acquirerId = SANDBOX_PRESETS[pId].defaultAcquirerId;
+          this.sandboxData.targetId = SANDBOX_PRESETS[pId].defaultTargetId;
+          this.sandboxData.remedy = 0;
+          this.renderSandbox();
+          this.showToast(`Cenário carregado: <strong>${SANDBOX_PRESETS[pId].title}</strong>`, 'info', 2500);
+        }
+      });
+    });
+
+    // Acquirer & Target Selectors
+    document.getElementById('sb-select-acquirer')?.addEventListener('change', (e) => {
+      this.sandboxData.acquirerId = e.target.value;
+      if (this.sandboxData.targetId === this.sandboxData.acquirerId) {
+        const other = this.sandboxData.companies.find(c => c.id !== this.sandboxData.acquirerId);
+        if (other) this.sandboxData.targetId = other.id;
+      }
+      this.renderSandbox();
+    });
+
+    document.getElementById('sb-select-target')?.addEventListener('change', (e) => {
+      this.sandboxData.targetId = e.target.value;
+      this.renderSandbox();
+    });
+
+    // Remedy Slider
+    document.getElementById('sb-remedy-slider')?.addEventListener('input', (e) => {
+      this.sandboxData.remedy = Number(e.target.value);
+      this.renderSandbox();
+    });
+
+    // Company Share Sliders
+    document.querySelectorAll('.sb-share-slider').forEach(slider => {
+      slider.addEventListener('input', (e) => {
+        const cId = e.target.dataset.companyId;
+        const val = Number(e.target.value);
+        this.updateSandboxCompanyShare(cId, val);
+        this.renderSandbox();
+      });
+    });
+
+    // Reset Button
+    document.getElementById('btn-sandbox-reset')?.addEventListener('click', () => {
+      Sound.playClick();
+      const current = SANDBOX_PRESETS[this.sandboxData.presetKey] || SANDBOX_PRESETS.tech_2025;
+      this.sandboxData.companies = JSON.parse(JSON.stringify(current.companies));
+      this.sandboxData.acquirerId = current.defaultAcquirerId;
+      this.sandboxData.targetId = current.defaultTargetId;
+      this.sandboxData.remedy = 0;
+      this.renderSandbox();
+      this.showToast('Parâmetros restaurados com sucesso!', 'success', 2000);
+    });
+  }
+
+  updateSandboxCompanyShare(companyId, newShare) {
+    const current = this.sandboxData.companies.find(c => c.id === companyId);
+    if (!current) return;
+    newShare = Math.max(1, Math.min(80, Math.round(newShare)));
+    const diff = newShare - current.share;
+    const others = this.sandboxData.companies.filter(c => c.id !== companyId);
+    const othersTotal = others.reduce((sum, c) => sum + c.share, 0);
+
+    if (othersTotal > 0) {
+      others.forEach(c => {
+        const shareOfOthers = c.share / othersTotal;
+        c.share = Math.max(1, Math.round(c.share - diff * shareOfOthers));
+      });
+    }
+    current.share = newShare;
+
+    // Normaliza para exatamente 100%
+    const finalTotal = this.sandboxData.companies.reduce((sum, c) => sum + c.share, 0);
+    const discrepancy = 100 - finalTotal;
+    if (discrepancy !== 0 && others.length > 0) {
+      others[0].share = Math.max(1, others[0].share + discrepancy);
     }
   }
 
