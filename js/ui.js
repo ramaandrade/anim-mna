@@ -158,7 +158,7 @@ export class UIManager {
         <span class="strip-val">${isBroke ? '⚠️ ' : ''}R$ ${s.cash}M</span>
       </div>
       <div class="m-strip-pill green" title="Valor de Mercado da Empresa (Market Cap)">
-        <span class="strip-lbl">Market Cap</span>
+        <span class="strip-lbl">Cap</span>
         <span class="strip-val">R$ ${s.marketCap}M</span>
       </div>
       <div class="m-strip-pill cyan" title="Participação no Setor B2B">
@@ -166,11 +166,11 @@ export class UIManager {
         <span class="strip-val">${s.marketShare}%</span>
       </div>
       <div class="m-strip-pill purple" title="Índice de Governança Corporativa e Alinhamento">
-        <span class="strip-lbl">Governança</span>
+        <span class="strip-lbl">Gov</span>
         <span class="strip-val">${s.governanceScore}%</span>
       </div>
       <div class="m-strip-pill ${hhiClass}" title="Concentração Antitruste do CADE">
-        <span class="strip-lbl">HHI Mercado</span>
+        <span class="strip-lbl">HHI</span>
         <span class="strip-val">${currentHHI} pts</span>
       </div>
     `;
@@ -178,35 +178,88 @@ export class UIManager {
 
   renderStepper(currentChapter) {
     const chapters = [
-      { num: 1, label: 'Início', icon: '🚀' },
-      { num: 2, label: 'Vertical', icon: '⛓️' },
-      { num: 3, label: 'Ataque', icon: '🦈' },
-      { num: 4, label: 'Defesa', icon: '🛡️' },
-      { num: 5, label: 'Horizontal & CADE', icon: '⚖️' },
-      { num: 6, label: 'Crise & Selic', icon: '🚨' },
-      { num: 7, label: 'Laudo', icon: '📋' }
+      { num: 1, shortLabel: 'Início', fullName: 'Onboarding (Mandato do CEO)', icon: '🚀' },
+      { num: 2, shortLabel: 'Vertical', fullName: 'Fusão Vertical (Cadeia & Nuvem)', icon: '⛓️' },
+      { num: 3, shortLabel: 'Ataque', fullName: 'Ataque Hostil do Tubarão Gordon', icon: '🦈' },
+      { num: 4, shortLabel: 'Defesa', fullName: 'O Dilema da Dra. Defesa', icon: '🛡️' },
+      { num: 5, shortLabel: 'CADE', fullName: 'Fusão Horizontal & O CADE', icon: '⚖️' },
+      { num: 6, shortLabel: 'Crise', fullName: 'Crise, Selic & Caso Sadia', icon: '🚨' },
+      { num: 7, shortLabel: 'Laudo', fullName: 'Laudo de Eficiência & Governança', icon: '📋' }
     ];
 
-    this.stepperNav.innerHTML = chapters.map(ch => {
-      const isCurrent = ch.num === currentChapter;
-      const isPast = ch.num < currentChapter;
-      const statusClass = isCurrent ? 'active' : isPast ? 'completed' : '';
+    const currentObj = chapters.find(c => c.num === currentChapter) || chapters[0];
+    const progressPercent = Math.round(((currentChapter - 1) / (chapters.length - 1)) * 100);
 
-      return `
-        <button class="step-dot-btn ${statusClass}" data-step="${ch.num}" title="Capítulo ${ch.num}: ${ch.label}">
-          <span class="step-num">${isPast ? '✓' : ch.num}</span>
-          <span class="step-label">${ch.label}</span>
+    this.stepperNav.innerHTML = `
+      <div class="stepper-track-wrap">
+        <!-- Linha de Progresso conectando todas as 7 etapas -->
+        <div class="stepper-progress-line-bg">
+          <div class="stepper-progress-line-fill" style="width: ${progressPercent}%"></div>
+        </div>
+
+        <!-- Grade responsiva com todas as 7 etapas 100% visíveis -->
+        <div class="stepper-items-grid">
+          ${chapters.map(ch => {
+            const isCurrent = ch.num === currentChapter;
+            const isPast = ch.num < currentChapter;
+            const statusClass = isCurrent ? 'active' : isPast ? 'completed' : '';
+
+            return `
+              <button class="step-grid-btn ${statusClass}" data-step="${ch.num}" title="Etapa ${ch.num}: ${ch.fullName}">
+                <div class="step-circle">
+                  ${isPast ? '✓' : ch.num}
+                </div>
+                <span class="step-mini-text">${ch.shortLabel}</span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Barra de Controle e Título da Etapa Atual -->
+      <div class="stepper-current-header">
+        <button class="step-nav-arrow" id="btn-step-prev" ${currentChapter <= 1 ? 'disabled' : ''} title="Etapa Anterior">
+          ‹
         </button>
-      `;
-    }).join('');
+        <div class="step-title-center">
+          <span class="step-counter-tag">Etapa ${currentChapter} de 7</span>
+          <strong class="step-full-name">${currentObj.icon} ${currentObj.fullName}</strong>
+        </div>
+        <button class="step-nav-arrow" id="btn-step-next" ${currentChapter >= 7 ? 'disabled' : ''} title="Próxima Etapa">
+          ›
+        </button>
+      </div>
+    `;
 
-    this.stepperNav.querySelectorAll('.step-dot-btn').forEach(btn => {
+    // Click nos passos individuais
+    this.stepperNav.querySelectorAll('.step-grid-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         Sound.playClick();
         const step = Number(btn.dataset.step);
         StateManager.setChapter(step);
       });
     });
+
+    // Setas de navegação anterior/próxima
+    const prevBtn = document.getElementById('btn-step-prev');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (currentChapter > 1) {
+          Sound.playClick();
+          StateManager.setChapter(currentChapter - 1);
+        }
+      });
+    }
+
+    const nextBtn = document.getElementById('btn-step-next');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (currentChapter < 7) {
+          Sound.playClick();
+          StateManager.setChapter(currentChapter + 1);
+        }
+      });
+    }
   }
 
   /* ========================================================
